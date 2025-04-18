@@ -7,11 +7,12 @@ function Hero() {
       <div className="hero-container">
         <div className="hero-content">
           <span className="discount-badge">WEEKLY DISCOUNT</span>
-          <h1 className="hero-title">Premium Product Online Shop</h1>
+          <h1 className="hero-title">Discover Your Next Great Read</h1>
           <p>
-            Explore our top-quality mobile phones, smartwatches, and wearables
-            designed to enhance your lifestyle. Stay connected, track your
-            health, and enjoy the best technology in your hands.{" "}
+            Explore our curated collection of fiction, non-fiction, science,
+            history, and fantasy books. Whether you&apos;re a casual reader or a
+            passionate bibliophile, find stories that inspire, educate, and
+            entertain.
           </p>
           <Button className="w-fit" asChild>
             <a href="/shop">Shop Now</a>
@@ -19,7 +20,7 @@ function Hero() {
         </div>
         <div className="hero-image-container">
           <img
-            src="https://fee-storefront.vercel.app/assets/hero/hero.jpg"
+            src="/assets/products/hero.jpg"
             alt=""
             className="hero-image"
           />

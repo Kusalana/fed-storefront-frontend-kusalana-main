@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
 import { Link } from 'react-router-dom';
+import { toast } from "sonner";
 
 
 function ProductCard(props) {
   const dispatch = useDispatch();
 
   const handleClick = (e) => {
+          toast.success("Added to cart successfully");
+    
     dispatch(
       addToCart({
         _id: props._id,
@@ -25,14 +28,14 @@ function ProductCard(props) {
     <Card>
                 <Link to={`/shop/${props._id}`} key={props.name}>
 
-      <div className="h-80 bg-card rounded-lg p-4 relative">
+      <div className="h-80 bg-card rounded-lg p-4 relative flex justify-center">
         <img src={props.image} className="block" />
       </div>
-      <div className="flex px-4 mt-4  items-center justify-between">
-        <h2 className="text-2xl  font-semibold">{props.name}</h2>
-        <span className="block text-lg font-medium">${props.price}</span>
+      <div className=" px-4 mt-4  items-center justify-between h-16 gap-2">
+        <h2 className="text-lg  font-semibold">{props.name}</h2>
+        <p className="block text-base font-medium">Rs. {props.price}</p>
       </div>
-      <div className="px-4 mt-2">
+      <div className="px-4 mt-6">
         <p className="text-sm">{props.description}</p>
       </div>
       </Link>

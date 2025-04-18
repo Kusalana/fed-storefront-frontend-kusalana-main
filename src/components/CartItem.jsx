@@ -11,7 +11,7 @@ function CartItem({ item }) {
         />
         <div className="flex-1">
           <p className="font-medium">{item.product.name}</p>
-          <p className="text-muted-foreground">${item.product.price}</p>
+          <p className="text-muted-foreground">Rs. {item.product.price}</p>
           <p className="text-sm">Quantity: {item.quantity}</p>
         </div>
       </div>

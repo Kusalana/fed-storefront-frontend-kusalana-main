@@ -21,8 +21,6 @@ function Products() {
     error: categoriesError,
   } = useGetCategoriesQuery();
 
- 
-
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NONE");
 
@@ -30,23 +28,22 @@ function Products() {
     selectedCategoryId === "ALL"
       ? products
       : products.filter((product) => product.categoryId === selectedCategoryId);
-      console.log(products);
-      const sortedProducts = () => {
-        const productsToSort = [...filteredProducts]; // This creates a shallow copy of filteredProducts
-      
-        if (sortOrder === "LOW_TO_HIGH") {
-          return productsToSort.sort(
-            (a, b) => parseFloat(a.price) - parseFloat(b.price)
-          );
-        }
-        if (sortOrder === "HIGH_TO_LOW") {
-          return productsToSort.sort(
-            (a, b) => parseFloat(b.price) - parseFloat(a.price)
-          );
-        }
-        return productsToSort; // Return the copied array, which is not mutated
-      };
-      
+  console.log(products);
+  const sortedProducts = () => {
+    const productsToSort = [...filteredProducts];
+
+    if (sortOrder === "LOW_TO_HIGH") {
+      return productsToSort.sort(
+        (a, b) => parseFloat(a.price) - parseFloat(b.price)
+      );
+    }
+    if (sortOrder === "HIGH_TO_LOW") {
+      return productsToSort.sort(
+        (a, b) => parseFloat(b.price) - parseFloat(a.price)
+      );
+    }
+    return productsToSort;
+  };
 
   const handleTabClick = (_id) => {
     setSelectedCategoryId(_id);
@@ -59,11 +56,10 @@ function Products() {
   const handleSortHighToLow = () => {
     setSortOrder("HIGH_TO_LOW");
   };
-  //  Loading state
   if (isProductsLoading || isCategoriesLoading) {
     return (
       <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Products</h2>
+        <h2 className="text-4xl font-bold">Our Top Books</h2>
         <Separator className="mt-2" />
         <div className="mt-4 flex items-center gap-4">
           <Skeleton className="h-16" />
@@ -82,10 +78,10 @@ function Products() {
   if (isProductsError || isCategoriesError) {
     return (
       <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Products</h2>
+        <h2 className="text-4xl font-bold">Our Top Books</h2>
         <Separator className="mt-2" />
         <div className="mt-4">
-          <p className="text-red-500">{`Error fetching products or categories`}</p>
+          <p className="text-red-500">{`Error fetching Books or categories`}</p>
         </div>
       </section>
     );
@@ -93,28 +89,37 @@ function Products() {
 
   return (
     <section className="px-8 py-8">
-    <h2 className="text-4xl font-bold">Our Top Products</h2>
-    <Separator className="mt-2" />
-    <div className="mt-4 flex items-center gap-4">
-      {categories.map((category) => (
-        <Tab
-          key={category._id}
-          _id={category._id}
-          selectedCategoryId={selectedCategoryId}
-          name={category.name}
-          onTabClick={handleTabClick}
-        />
-      ))}{" "}
-    </div>
+      <h2 className="text-4xl font-bold">Our Top Books</h2>
+      <Separator className="mt-2" />
+      <div className="mt-4 flex items-center gap-4">
+        {categories.map((category) => (
+          <Tab
+            key={category._id}
+            _id={category._id}
+            selectedCategoryId={selectedCategoryId}
+            name={category.name}
+            onTabClick={handleTabClick}
+          />
+        ))}{" "}
+      </div>
 
-    <div className="flex mt-4 gap-2">
-      <Button  onClick={handleSortLowToHigh}>Sort by price: Ascending</Button>
-      <Button  onClick={handleSortHighToLow}>Sort by price: Descending</Button>
-    </div>
-    <ProductCards products={sortedProducts()} />
-  </section>
-);
+      <div className="flex mt-4 gap-2">
+        <Button
+          variant={sortOrder === "LOW_TO_HIGH" ? "default" : "outline"}
+          onClick={handleSortLowToHigh}
+        >
+          Sort by price: Ascending
+        </Button>
+        <Button
+          variant={sortOrder === "HIGH_TO_LOW" ? "default" : "outline"}
+          onClick={handleSortHighToLow}
+        >
+          Sort by price: Descending
+        </Button>
+      </div>
+      <ProductCards products={sortedProducts()} />
+    </section>
+  );
 }
-
 
 export default Products;

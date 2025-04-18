@@ -4,11 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { clearCart } from "@/lib/features/cartSlice";
 import { useDispatch } from "react-redux";
-
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,12 +25,8 @@ const formSchema = z.object({
   state: z.string().min(1),
   zip_code: z.string().min(1),
   phone: z.string().refine(
-    (value) => {
-      return /^\+?[1-9]\d{1,14}$/.test(value);
-    },
-    {
-      message: "Invalid phone number format",
-    }
+    (value) => /^\+?[1-9]\d{1,14}$/.test(value),
+    { message: "Invalid phone number format" }
   ),
 });
 
@@ -40,11 +35,10 @@ const ShippingAddressForm = ({ cart }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
-  const [createOrder, { isLoading, isError, data }] = useCreateOrderMutation();
+
+  const [createOrder] = useCreateOrderMutation();
   const [updateInventory] = useUpdateInventoryMutation();
   const navigate = useNavigate();
-
-  console.log(cart);
 
   async function inventoryUpdate(cartItems) {
     try {
@@ -60,35 +54,69 @@ const ShippingAddressForm = ({ cart }) => {
     }
   }
 
-  // Handle form submit
-  function handleSubmit(values) {
-    // Create the order
-    createOrder({
-      items: cart,
-      shippingAddress: {
-        line_1: values.line_1,
-        line_2: values.line_2,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        phone: values.phone,
-      },
-    });
+  async function handleSubmit(values, event) {
+    event?.preventDefault();
 
-    inventoryUpdate(cart);
+    try {
+      // 1. Create Order
+      await createOrder({
+        items: cart,
+        shippingAddress: {
+          line_1: values.line_1,
+          line_2: values.line_2,
+          city: values.city,
+          state: values.state,
+          zip_code: values.zip_code,
+          phone: values.phone,
+        },
+      });
 
-    // Clear cart and show success message
-    toast.success("Checkout successful");
-    dispatch(clearCart());
+      // 2. Update Inventory
+      await inventoryUpdate(cart);
 
-    // Navigate to shop or payment page
-    navigate("/shop");
+      // 3. Clear cart
+      dispatch(clearCart());
+      toast.success("Order created successfully");
+
+      // 4. Prepare Stripe Checkout
+      const cartItems = cart.map((item) => ({
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+      }));
+
+      const res = await fetch("https://fed-storefront-backend-kusalana.onrender.com", {
+      //const res = await fetch("http://localhost:8000/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cartItems }),
+      });
+
+      const data = await res.json();
+      console.log("Stripe session data:", data);
+
+      const stripe = await loadStripe("pk_test_51OWYYoSBJOn5pe8CDkcTkxyy6og0Ro3kYEIuoMwzedJ0oSpiqMRQf2x6DKx87R26jn44xD0tdeyvLZTUY3ZozAtb00sgHpXiWT");
+
+      if (data?.sessionId) {
+        await stripe.redirectToCheckout({ sessionId: data.sessionId });
+      } else {
+        toast.error("Stripe session creation failed");
+      }
+
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
+    }
   }
 
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          onSubmit={(e) =>
+            form.handleSubmit((values) => handleSubmit(values, e))(e)
+          }
+        >
           <div className="grid grid-cols-2 gap-y-2 gap-x-4">
             <FormField
               control={form.control}
@@ -136,7 +164,7 @@ const ShippingAddressForm = ({ cart }) => {
                 <FormItem>
                   <FormLabel>State/Province</FormLabel>
                   <FormControl>
-                    <Input placeholder="Wester Province" {...field} />
+                    <Input placeholder="Western Province" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -25,7 +25,7 @@ function CompletePage() {
       </div>
       <div className="mt-4">
         <p>
-          Total Price: $
+          Total Price: Rs.
           {data.items.reduce(
             (acc, item) => acc + item.product.price * item.quantity,
             0

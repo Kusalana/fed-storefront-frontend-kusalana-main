@@ -2,11 +2,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
+import { toast } from "sonner";
 
 function DetailCard(props) {
   const dispatch = useDispatch();
 
   const handleClick = (e) => {
+    toast.success("Added to cart successfully");
+
     dispatch(
       addToCart({
         _id: props._id,
@@ -37,7 +40,7 @@ function DetailCard(props) {
             </h2>
             <p className="text-lg text-gray-600 mt-2">{props.description}</p>
             <span className="block text-xl font-medium text-gray-900 mt-2">
-              Price: ${props.price}
+              Price: Rs. {props.price}
             </span>
           </div>
 

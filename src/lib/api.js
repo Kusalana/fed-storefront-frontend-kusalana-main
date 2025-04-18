@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const BASE_URL = "https://fed-storefront-backend-kusalana.onrender.com";
+//const BASE_URL = "http://localhost:8000";
 
 export const Api = createApi({
   reducerPath: "Api",
@@ -65,5 +66,5 @@ export const {
   useGetOrderQuery,
   useGetOrdersQuery,
   useCreateProductMutation,
-  useUpdateInventoryMutation,  // Export the updateInventory hook
+  useUpdateInventoryMutation,
 } = Api;

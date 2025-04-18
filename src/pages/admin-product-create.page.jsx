@@ -128,7 +128,7 @@ function AdminProductCreatePage() {
 
           <div>
             <label className="block text-sm font-semibold mb-2" htmlFor="price">
-              Price ($)
+              Price (Rs.)
             </label>
             <input
               type="number"
