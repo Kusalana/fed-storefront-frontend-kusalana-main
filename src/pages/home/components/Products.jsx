@@ -11,14 +11,12 @@ function Products() {
     data: products,
     isLoading: isProductsLoading,
     isError: isProductsError,
-    error: productsError,
   } = useGetProductsQuery();
 
   const {
     data: categories,
     isLoading: isCategoriesLoading,
     isError: isCategoriesError,
-    error: categoriesError,
   } = useGetCategoriesQuery();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
@@ -28,10 +26,9 @@ function Products() {
     selectedCategoryId === "ALL"
       ? products
       : products.filter((product) => product.categoryId === selectedCategoryId);
-  console.log(products);
+
   const sortedProducts = () => {
     const productsToSort = [...filteredProducts];
-
     if (sortOrder === "LOW_TO_HIGH") {
       return productsToSort.sort(
         (a, b) => parseFloat(a.price) - parseFloat(b.price)
@@ -45,26 +42,21 @@ function Products() {
     return productsToSort;
   };
 
-  const handleTabClick = (_id) => {
-    setSelectedCategoryId(_id);
-  };
+  const handleTabClick = (_id) => setSelectedCategoryId(_id);
+  const handleSortLowToHigh = () => setSortOrder("LOW_TO_HIGH");
+  const handleSortHighToLow = () => setSortOrder("HIGH_TO_LOW");
 
-  const handleSortLowToHigh = () => {
-    setSortOrder("LOW_TO_HIGH");
-  };
-
-  const handleSortHighToLow = () => {
-    setSortOrder("HIGH_TO_LOW");
-  };
+  // Loading State
   if (isProductsLoading || isCategoriesLoading) {
     return (
-      <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Books</h2>
+      <section className="px-4 py-6 sm:px-6 md:px-8">
+        <h2 className="text-2xl md:text-4xl font-bold">Our Top Books</h2>
         <Separator className="mt-2" />
-        <div className="mt-4 flex items-center gap-4">
-          <Skeleton className="h-16" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-24" />
         </div>
-        <div className="grid grid-cols-4 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           <Skeleton className="h-80" />
           <Skeleton className="h-80" />
           <Skeleton className="h-80" />
@@ -74,36 +66,39 @@ function Products() {
     );
   }
 
-  // Error handling
+  // Error State
   if (isProductsError || isCategoriesError) {
     return (
-      <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Books</h2>
+      <section className="px-4 py-6 sm:px-6 md:px-8">
+        <h2 className="text-2xl md:text-4xl font-bold">Our Top Books</h2>
         <Separator className="mt-2" />
-        <div className="mt-4">
-          <p className="text-red-500">{`Error fetching Books or categories`}</p>
-        </div>
+        <p className="mt-4 text-red-500">Error fetching books or categories</p>
       </section>
     );
   }
 
   return (
-    <section className="px-8 py-8">
-      <h2 className="text-4xl font-bold">Our Top Books</h2>
+    <section className="px-4 py-6 sm:px-6 md:px-8">
+      <h2 className="text-2xl md:text-4xl font-bold">Our Top Books</h2>
       <Separator className="mt-2" />
-      <div className="mt-4 flex items-center gap-4">
-        {categories.map((category) => (
-          <Tab
-            key={category._id}
-            _id={category._id}
-            selectedCategoryId={selectedCategoryId}
-            name={category.name}
-            onTabClick={handleTabClick}
-          />
-        ))}{" "}
+
+      {/* Tabs */}
+      <div className="mt-4 w-full overflow-x-auto">
+        <div className="flex w-max gap-2 sm:gap-4 px-2 pb-2">
+          {categories.map((category) => (
+            <Tab
+              key={category._id}
+              _id={category._id}
+              selectedCategoryId={selectedCategoryId}
+              name={category.name}
+              onTabClick={handleTabClick}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="flex mt-4 gap-2">
+      {/* Sort Buttons */}
+      <div className="flex flex-col sm:flex-row mt-4 gap-2">
         <Button
           variant={sortOrder === "LOW_TO_HIGH" ? "default" : "outline"}
           onClick={handleSortLowToHigh}
@@ -117,7 +112,11 @@ function Products() {
           Sort by price: Descending
         </Button>
       </div>
-      <ProductCards products={sortedProducts()} />
+
+      {/* Product Grid */}
+      <div className="mt-6">
+        <ProductCards products={sortedProducts()} />
+      </div>
     </section>
   );
 }
