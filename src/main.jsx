@@ -16,6 +16,8 @@ import HomePage from "./pages/home/home.page";
 import SignInPage from "./pages/sign-in.page";
 import SignUpPage from "./pages/sign-up.page";
 import Success from "@/pages/success"; 
+import SuccessCod from "@/pages/success-cod"; 
+
 
 import MainLayout from "./layouts/main.layout";
 import RootLayout from "./layouts/rootLayout/root.layout";
@@ -54,6 +56,7 @@ createRoot(document.getElementById("root")).render(
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/past-orders" element={<Orders />} />
                 <Route path="/success" element={<Success />} />
+                <Route path="/success-cod" element={<SuccessCod />} />
 
 
                 {/* The AdminProtected layout can be used to wrap routes that needs to be logged in as admin to access */}

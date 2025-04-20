@@ -48,9 +48,9 @@ const ShippingAddressForm = ({ cart }) => {
           quantity: item.quantity,
         });
       }
-      toast.success("Inventory updated successfully");
     } catch (error) {
       toast.error("Error updating inventory");
+      console.error(error);
     }
   }
 
@@ -58,7 +58,6 @@ const ShippingAddressForm = ({ cart }) => {
     event?.preventDefault();
 
     try {
-      // 1. Create Order
       await createOrder({
         items: cart,
         shippingAddress: {
@@ -71,14 +70,11 @@ const ShippingAddressForm = ({ cart }) => {
         },
       });
 
-      // 2. Update Inventory
       await inventoryUpdate(cart);
 
-      // 3. Clear cart
       dispatch(clearCart());
       toast.success("Order created successfully");
 
-      // 4. Prepare Stripe Checkout
       const cartItems = cart.map((item) => ({
         name: item.product.name,
         price: item.product.price,
@@ -98,14 +94,14 @@ const ShippingAddressForm = ({ cart }) => {
       const stripe = await loadStripe("pk_test_51OWYYoSBJOn5pe8CDkcTkxyy6og0Ro3kYEIuoMwzedJ0oSpiqMRQf2x6DKx87R26jn44xD0tdeyvLZTUY3ZozAtb00sgHpXiWT");
 
       if (data?.sessionId) {
-        await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        await stripe.redirectToCheckout({ sessionId: data.sessionI });
       } else {
-        toast.error("Stripe session creation failed");
+        navigate("/success-cod");
       }
 
     } catch (error) {
-      toast.error("Something went wrong");
       console.error(error);
+      navigate("/success-cod");
     }
   }
 
